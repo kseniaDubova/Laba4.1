@@ -21,16 +21,15 @@ Tree::~Tree()
 }
 void Tree:: recursion_copy(const Node* obj)
 {
-    recursion_destructor(root);
+    insert(obj->_data);
     if(obj->_left)
         recursion_copy(obj->_left);
     if(obj->_right)
         recursion_copy(obj->_right);
-    insert(obj->_data);
-    
 }
 Tree::Tree(const Tree& obj)
 {
+    recursion_destructor(root);
     recursion_copy(obj.root);
 }
 void Tree:: recursion_print(const Node* obj)
@@ -44,7 +43,7 @@ void Tree:: recursion_print(const Node* obj)
 }
 void Tree:: print()
 {
-    if(!root) throw ("Tree is empty\n");
+    if(!root) throw ("Tree is empty");
     recursion_print(root);
 }
 bool Tree:: insert(int key)//вставка элемента
@@ -83,9 +82,71 @@ bool Tree:: insert(int key)//вставка элемента
     }
     return false;
 }
-//bool Tree:: contains(int key)//проверка наличия элемента
-//{}
-//bool Tree:: erase(int key)//удаление элемента
-//{}
-//Tree& Tree:: operator=(const Tree& obj)
-//{}
+
+Node* Tree:: search(Node* obj, int key)
+{
+    if (!obj) return nullptr;
+    if (obj->_data == key) return obj;
+    if (obj->_data < key) search(obj->_left, key);
+    if (obj->_data > key) search(obj->_right, key);
+
+}
+bool Tree:: contains(int key)//проверка наличия элемента
+{
+    if (search(root, key))
+        return true;
+    return false;
+}
+Node* min(Node* obj)
+{
+    if (obj)
+    {
+        if(obj->_left)
+            return min(obj->_left);
+    }
+    return obj;
+}
+bool Tree:: erase(int key)//удаление элемента
+{
+    if (!root) throw ("Tree is empty");
+//    if (!search(root, key)) throw ("Key don't exist");
+    Node* tmp = search(root, key);
+    Node* min_tmp = min(root);
+    if (tmp->_left && tmp->_right)
+    {
+        tmp->_data = min_tmp->_data;
+        delete min_tmp;
+        min_tmp = nullptr;
+        return true;
+    }
+    if (tmp->_left || tmp->_right)
+    {
+        if(tmp->_left)
+        {
+            tmp->_data = tmp->_left->_data;
+            delete tmp->_left;
+            tmp->_left = nullptr;
+            return true;
+        }
+        if(tmp->_right)
+        {
+            tmp->_data = tmp->_right->_data;
+            delete tmp->_right;
+            tmp->_right = nullptr;
+            return true;
+        }
+    }
+    if(!tmp->_left && !tmp->_right)
+    {
+        delete tmp;
+        tmp = nullptr;
+        return true;
+    }
+    return false;
+}
+Tree& Tree:: operator=(const Tree& obj)
+{
+    recursion_destructor(root);
+    recursion_copy(obj.root);
+    return (*this);
+}

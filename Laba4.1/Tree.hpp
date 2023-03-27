@@ -29,6 +29,7 @@ private:
     void recursion_print(const Node* obj);
     void recursion_destructor(Node* obj);
     void recursion_copy(const Node* obj);
+    Node* search(Node* obj, int key);
 public:
     Tree();
     ~Tree();
