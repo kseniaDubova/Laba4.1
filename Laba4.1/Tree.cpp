@@ -2,23 +2,30 @@
 #include "Tree.hpp"
 using namespace std;
 
+
 Tree:: Tree()
 {
-    root = NULL;
+    root = nullptr;
 }
+
+
 void Tree:: recursion_destructor(Node* obj)
 {
-    if(!obj) return;
     if(obj->_left)
         recursion_destructor(obj->_left);
     if(obj->_right)
         recursion_destructor(obj->_right);
     delete obj;
+    obj = nullptr;
 }
-Tree::~Tree()
+
+
+Tree:: ~Tree()
 {
     recursion_destructor(root);
 }
+
+
 void Tree:: recursion_copy(const Node* obj)
 {
     insert(obj->_data);
@@ -27,25 +34,33 @@ void Tree:: recursion_copy(const Node* obj)
     if(obj->_right)
         recursion_copy(obj->_right);
 }
-Tree::Tree(const Tree& obj)
+
+
+Tree:: Tree(const Tree& obj)
 {
     recursion_destructor(root);
     recursion_copy(obj.root);
 }
+
+
 void Tree:: recursion_print(const Node* obj)
 {
     if(obj)
     {
-        cout << obj->_data;
+        cout << obj->_data << " ";
         recursion_print(obj->_left);
         recursion_print(obj->_right);
     }
 }
+
+
 void Tree:: print()
 {
     if(!root) throw ("Tree is empty");
     recursion_print(root);
 }
+
+
 bool Tree:: insert(int key)//вставка элемента
 {
     if(!root)
@@ -53,18 +68,21 @@ bool Tree:: insert(int key)//вставка элемента
         root = new Node(key);
         return true;
     }
+    
     Node* tmp = root;
+    tmp->_predoc = nullptr;
     while(tmp)
     {
         if (tmp ->_data==key)
             return true;
+        
         if (tmp->_data < key)
         {
             if (tmp->_right)
                 tmp = tmp->_right;
             else
             {
-                tmp->_right = new Node(key);
+                tmp->_right = new Node(key, tmp);
                 return true;
             }
         }
@@ -74,7 +92,7 @@ bool Tree:: insert(int key)//вставка элемента
                 tmp = tmp->_left;
             else
             {
-                tmp->_left = new Node(key);
+                tmp->_left = new Node(key, tmp);
                 return true;
             }
 
@@ -83,42 +101,62 @@ bool Tree:: insert(int key)//вставка элемента
     return false;
 }
 
-Node* Tree:: search(Node* obj, int key)
-{
-    if (!obj) return nullptr;
-    if (obj->_data == key) return obj;
-    if (obj->_data < key) search(obj->_left, key);
-    if (obj->_data > key) search(obj->_right, key);
 
+Node* Tree:: search(int key)
+{
+    if (!root) return nullptr;
+    Node* tmp = root;
+    
+    while(tmp)
+    {
+        if (tmp->_data == key)
+            return tmp;
+        
+        if (tmp->_data < key)
+            tmp = tmp->_right;
+        
+        if (tmp->_data > key)
+            tmp = tmp->_left;
+    }
+    return nullptr;
 }
+
+
 bool Tree:: contains(int key)//проверка наличия элемента
 {
-    if (search(root, key))
+    if (search(key))
         return true;
     return false;
 }
-Node* min(Node* obj)
+
+
+Node* Tree:: min(Node* obj)
 {
     if (obj)
     {
-        if(obj->_left)
-            return min(obj->_left);
+        if(obj->_right)
+            return min(obj->_right);
     }
     return obj;
 }
+
+
 bool Tree:: erase(int key)//удаление элемента
 {
     if (!root) throw ("Tree is empty");
-//    if (!search(root, key)) throw ("Key don't exist");
-    Node* tmp = search(root, key);
-    Node* min_tmp = min(root);
+    if (!insert(key)) throw ("Key don't exist");
+    Node* tmp = search(key);
+    Node* min_tmp = min(tmp->_right);
+    
     if (tmp->_left && tmp->_right)
     {
         tmp->_data = min_tmp->_data;
+        min_tmp->_predoc->_right = nullptr;
         delete min_tmp;
         min_tmp = nullptr;
         return true;
     }
+    
     if (tmp->_left || tmp->_right)
     {
         if(tmp->_left)
@@ -136,17 +174,23 @@ bool Tree:: erase(int key)//удаление элемента
             return true;
         }
     }
+    
     if(!tmp->_left && !tmp->_right)
     {
+        if (tmp->_predoc->_left && tmp->_predoc->_left->_data == tmp->_data)
+            tmp->_predoc->_left = nullptr;
+        else
+            tmp->_predoc->_right = nullptr;
         delete tmp;
         tmp = nullptr;
         return true;
     }
     return false;
 }
+
+
 Tree& Tree:: operator=(const Tree& obj)
 {
-    recursion_destructor(root);
     recursion_copy(obj.root);
     return (*this);
 }

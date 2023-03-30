@@ -12,11 +12,13 @@
 struct Node
 {
     int _data;
+    Node* _predoc;
     Node* _left;
     Node* _right;
-    Node(int data = 0, Node* left = NULL, Node* right = NULL)
+    Node(int data = 0, Node* predoc = nullptr, Node* left = nullptr, Node* right = nullptr)
     {
         _data = data;
+        _predoc = predoc;
         _left = left;
         _right = right;
     }
@@ -29,7 +31,8 @@ private:
     void recursion_print(const Node* obj);
     void recursion_destructor(Node* obj);
     void recursion_copy(const Node* obj);
-    Node* search(Node* obj, int key);
+    Node* search(int key);
+    Node* min(Node* obj);
 public:
     Tree();
     ~Tree();
