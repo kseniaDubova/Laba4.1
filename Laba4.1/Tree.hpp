@@ -7,7 +7,7 @@
 
 #ifndef Tree_hpp
 #define Tree_hpp
-
+#include "ESetErrors.hpp"
 #include <stdio.h>
 struct Node
 {

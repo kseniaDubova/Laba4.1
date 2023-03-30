@@ -56,7 +56,7 @@ void Tree:: recursion_print(const Node* obj)
 
 void Tree:: print()
 {
-    if(!root) throw ("Tree is empty");
+    if(!root) throw EEmpty();
     recursion_print(root);
 }
 
@@ -74,7 +74,10 @@ bool Tree:: insert(int key)//вставка элемента
     while(tmp)
     {
         if (tmp ->_data==key)
+        {
             return true;
+        }
+            
         
         if (tmp->_data < key)
         {
@@ -143,8 +146,8 @@ Node* Tree:: min(Node* obj)
 
 bool Tree:: erase(int key)//удаление элемента
 {
-    if (!root) throw ("Tree is empty");
-    if (!insert(key)) throw ("Key don't exist");
+    if (!root) throw EUnpossibal();
+    if (!insert(key)) throw EUncorrectIndex();
     Node* tmp = search(key);
     Node* min_tmp = min(tmp->_right);
     
