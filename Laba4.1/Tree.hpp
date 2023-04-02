@@ -29,11 +29,11 @@ class Tree
 private:
     Node* root;
     void recursion_print(const Node* obj);
-    void recursion_destructor(Node* obj);
     void recursion_copy(const Node* obj);
     Node* search(int key);
     Node* min(Node* obj);
 public:
+    void recursion_destructor(Node* obj);
     Tree();
     ~Tree();
     Tree(const Tree& obj);

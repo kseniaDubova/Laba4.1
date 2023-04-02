@@ -22,7 +22,8 @@ void Tree:: recursion_destructor(Node* obj)
 
 Tree:: ~Tree()
 {
-    recursion_destructor(root);
+    if (root)
+        recursion_destructor(root);
 }
 
 
@@ -115,11 +116,16 @@ Node* Tree:: search(int key)
         if (tmp->_data == key)
             return tmp;
         
-        if (tmp->_data < key)
-            tmp = tmp->_right;
-        
-        if (tmp->_data > key)
-            tmp = tmp->_left;
+        else
+        {
+            if (tmp->_data < key)
+                tmp = tmp->_right;
+            else
+            {
+                if (tmp->_data > key)
+                    tmp = tmp->_left;
+            }
+        }
     }
     return nullptr;
 }
@@ -159,34 +165,47 @@ bool Tree:: erase(int key)//удаление элемента
         min_tmp = nullptr;
         return true;
     }
-    
-    if (tmp->_left || tmp->_right)
+    else
     {
-        if(tmp->_left)
+        if (tmp->_left || tmp->_right)
         {
-            tmp->_data = tmp->_left->_data;
-            delete tmp->_left;
-            tmp->_left = nullptr;
-            return true;
+            if(tmp->_left)
+            {
+                tmp->_data = tmp->_left->_data;
+                delete tmp->_left;
+                tmp->_left = nullptr;
+                return true;
+            }
+            if(tmp->_right)
+            {
+                tmp->_data = tmp->_right->_data;
+                delete tmp->_right;
+                tmp->_right = nullptr;
+                return true;
+            }
         }
-        if(tmp->_right)
-        {
-            tmp->_data = tmp->_right->_data;
-            delete tmp->_right;
-            tmp->_right = nullptr;
-            return true;
-        }
-    }
-    
-    if(!tmp->_left && !tmp->_right)
-    {
-        if (tmp->_predoc->_left && tmp->_predoc->_left->_data == tmp->_data)
-            tmp->_predoc->_left = nullptr;
         else
-            tmp->_predoc->_right = nullptr;
-        delete tmp;
-        tmp = nullptr;
-        return true;
+        {
+            if(!(tmp->_left || tmp->_right))
+            {
+                if (!tmp->_predoc)
+                {
+                    delete tmp;
+                    tmp = nullptr;
+                    root = nullptr;
+                }
+                else
+                {
+                    if (tmp->_predoc->_left && tmp->_predoc->_left->_data == tmp->_data)
+                        tmp->_predoc->_left = nullptr;
+                    else
+                        tmp->_predoc->_right = nullptr;
+                    delete tmp;
+                    tmp = nullptr;
+                }
+                return true;
+            }
+        }
     }
     return false;
 }
