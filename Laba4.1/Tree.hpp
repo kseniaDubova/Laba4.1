@@ -9,6 +9,8 @@
 #define Tree_hpp
 #include "ESetErrors.hpp"
 #include <stdio.h>
+#include <iostream>
+using namespace std;
 struct Node
 {
     int _data;
@@ -28,7 +30,7 @@ class Tree
 {
 private:
     Node* root;
-    void recursion_print(const Node* obj);
+    void recursion_print(const Node* obj, int level = 5);
     void recursion_copy(const Node* obj);
     Node* search(int key);
     Node* min(Node* obj);

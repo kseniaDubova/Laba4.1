@@ -1,5 +1,6 @@
 #include "Tree.hpp"
 #include <iostream>
+#include <fstream>
 #include <vector>
 using namespace std;
 
@@ -101,7 +102,7 @@ vector<int> delete_dublicate(vector<int>& data)
     bool flag = false;
     for (auto it = data.begin(); it != data.end(); it++)
     {
-        for (auto iter = it+1; iter != data.end(); iter++)
+        for (auto iter = it + 1; iter != data.end(); iter++)
         {
             if (*it == *iter)
             {
@@ -112,7 +113,6 @@ vector<int> delete_dublicate(vector<int>& data)
         if (!flag)
         {
             result.push_back(*it);
-            
         }
         flag = false;
     }
@@ -163,6 +163,26 @@ void exercise(Tree& obj)
     getchar();
 }
 
+
+void create_v(int size)
+{
+    clock_t start, end;
+    double mean_time = 0;
+    for (int i = 0; i < 100; i += 1)
+    {
+        vector<int> tmp;
+        start = clock();
+        for (int j = 0; j < size; j++)
+            tmp.push_back(int(lcg()));
+        end = clock();
+        mean_time += (double(end - start)) / (double(CLOCKS_PER_SEC));
+    }
+    mean_time /= 100;
+    cout << endl << "Time of create vector with " << size << " elements: " << mean_time << endl;
+    getchar();
+}
+
+
 void create_time(int size)
 {
     clock_t start, end;
@@ -178,6 +198,32 @@ void create_time(int size)
     }
     mean_time /= 100;
     cout << endl << "Time of create tree with " << size << " elements: " << mean_time << endl;
+    create_v(size);
+    getchar();
+}
+
+
+void search_v(int size)
+{
+    clock_t start, end;
+    vector<int> obj;
+    double mean_time = 0;
+
+    for (int j = 0; j < size; j++)
+            obj.push_back(int(lcg()));
+    
+    for (int i = 0; i < 1000; i ++)
+    {
+        int key = int(lcg());
+        while (find(obj.begin(), obj.end(), key) == obj.end())
+            key = int(lcg());
+        start = clock();
+        find(obj.begin(), obj.end(), key);
+        end = clock();
+        mean_time += (double(end - start)) / (double(CLOCKS_PER_SEC));
+    }
+    mean_time /= 1000;
+    cout << endl << "Time of search element in vector with " << size << " elements: " << mean_time << endl;
     getchar();
 }
 
@@ -202,6 +248,48 @@ void search_time(int size)
     }
     mean_time /= 1000;
     cout << endl << "Time of search element in tree with " << size << " elements: " << mean_time << endl;
+    search_v(size);
+    getchar();
+}
+
+
+void add_and_delete_v(int size)
+{
+    clock_t start, end;
+    double mean_time = 0;
+    
+    
+    for (int i = 0; i < 100; i ++)
+    {
+        vector<int> obj;
+        for (int j = 0; j < size; j++)
+            obj.push_back(int(lcg()));
+        int key = int(lcg());
+        while (find(obj.begin(), obj.end(), key) != obj.end())
+            key = int(lcg());
+        start = clock();
+        obj.push_back(key);
+        end = clock();
+        mean_time += (double(end - start)) / (double(CLOCKS_PER_SEC));
+    }
+    mean_time /= 100;
+    cout << endl << "Time of insert element in vector with " << size << " elements: " << mean_time << endl;
+    mean_time = 0;
+    for (int i = 0; i < 100; i ++)
+    {
+        vector<int> obj;
+        for (int j = 0; j < size; j++)
+            obj.push_back(int(lcg()));
+        int key = int(lcg());
+        while (find(obj.begin(), obj.end(), key) == obj.end())
+            key = int(lcg());
+        start = clock();
+        obj.erase(find(obj.begin(), obj.end(), key));
+        end = clock();
+        mean_time += (double(end - start)) / (double(CLOCKS_PER_SEC));
+    }
+    mean_time /= 100;
+    cout << endl << "Time of erase element in vector with " << size << " elements: " << mean_time << endl;
     getchar();
 }
 
@@ -224,7 +312,7 @@ void add_and_delete_time(int size)
         end = clock();
         mean_time += (double(end - start)) / (double(CLOCKS_PER_SEC));
     }
-    mean_time /= 100;
+    mean_time /= 1000;
     cout << endl << "Time of insert element in tree with " << size << " elements: " << mean_time << endl;
     mean_time = 0;
     for (int i = 0; i < 1000; i ++)
@@ -241,9 +329,9 @@ void add_and_delete_time(int size)
     }
     mean_time /= 1000;
     cout << endl << "Time of erase element in tree with " << size << " elements: " << mean_time << endl;
+    add_and_delete_v(size);
     getchar();
 }
-
 
 void muny_time(Tree& obj)
 {
@@ -286,6 +374,10 @@ void muny_time(Tree& obj)
             break;
     }
     void (*operatoin[3])(int size) = {create_time, search_time, add_and_delete_time};
+//    n = 100000;
+//    create_time(n);
+//    search_time(n);
+//    add_and_delete_time(n);
     operatoin[n - 1](size);
 }
 
@@ -313,22 +405,57 @@ int main()
     }
 }
 /*
-Время:
+Время tree:
  создание:
     Time of create tree with 1000 elements: 0.00020311
+    Time of create tree with 5000 elements: 0.00082857
     Time of create tree with 10000 elements: 0.00157689
+    Time of create tree with 50000 elements: 0.0086182
     Time of create tree with 100000 elements: 0.0188188
  поиск:
-    Time of search element in tree with 1000 elements: 4.59e-07
-    Time of search element in tree with 10000 elements: 4.31e-07
-    Time of search element in tree with 100000 elements: 4.27e-07
+    Time of search element in tree with 1000 elements: 2.72E-07
+    Time of search element in tree with 5000 elements: 2.31E-07
+    Time of search element in tree with 10000 elements: 2.30E-07
+    Time of search element in tree with 50000 elements: 2.60E-07
+    Time of search element in tree with 100000 elements: 2.53E-07
  удаление:
-     Time of erase element in tree with 1000 elements: 7.05e-07
-     Time of erase element in tree with 10000 elements: 7.51e-07
-     Time of erase element in tree with 100000 elements: 1.554e-06
+    Time of erase element in tree with 1000 elements: 7.05e-07
+    Time of erase element in tree with 5000 elements: 7.83E-07
+    Time of erase element in tree with 10000 elements: 9.57e-07
+    Time of erase element in tree with 50000 elements: 1.08E-06
+    Time of erase element in tree with 100000 elements: 1.554e-06
  добавление:
-     Time of insert element in tree with 1000 elements: 3.87e-06
-     Time of insert element in tree with 10000 elements: 5.1e-06
-     Time of insert element in tree with 100000 elements: 9.08e-06
+    Time of insert element in tree with 1000 elements: 3.87e-06
+    Time of insert element in tree with 5000 elements: 4.06E-07
+    Time of insert element in tree with 10000 elements: 8.10E-07
+    Time of insert element in tree with 50000 elements: 2.01E-06
+    Time of insert element in tree with 100000 elements: 7.08E-06
 
+ Время vector:
+  создание:
+    Time of create vector with 1000 elements: 5.595e-05
+    Time of create vector with 5000 elements: 0.00015439
+    Time of create vector with 10000 elements: 0.00030383
+    Time of create vector with 50000 elements: 0.00143139
+    Time of create vector with 100000 elements: 0.00285573
+  поиск:
+    Time of search element in vector with 1000 elements: 2.614e-06
+    Time of search element in vector with 5000 elements: 2.591e-06
+    Time of search element in vector with 10000 elements: 2.567e-06
+    Time of search element in vector with 50000 elements: 2.729e-06
+    Time of search element in vector with 100000 elements: 2.742e-06
+  удаление:
+    Time of erase element in vector with 1000 elements: 4.6e-06
+    Time of erase element in vector with 5000 elements: 1.023e-05
+    Time of erase element in vector with 10000 elements: 1.49e-05
+    Time of erase element in tree with 50000 elements: 1.076e-06
+    Time of erase element in vector with 100000 elements: 9.03e-05
+  добавление:
+    Time of insert element in vector with 1000 elements: 2e-07
+    Time of insert element in vector with 5000 elements: 2.7e-07
+    Time of insert element in vector with 10000 elements: 2.5e-07
+    Time of insert element in vector with 50000 elements: 4.9e-07
+    Time of insert element in vector with 100000 elements: 8.1e-07
+ 
+ 
 */

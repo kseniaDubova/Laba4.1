@@ -44,13 +44,15 @@ Tree:: Tree(const Tree& obj)
 }
 
 
-void Tree:: recursion_print(const Node* obj)
+void Tree:: recursion_print(const Node* obj, int level)
 {
     if(obj)
     {
-        cout << obj->_data << " ";
-        recursion_print(obj->_left);
-        recursion_print(obj->_right);
+        recursion_print(obj->_right, level + 1);
+        for (int i = 0; i < level; i++)
+            cout << "   ";
+        cout << obj->_data << endl;
+        recursion_print(obj->_left, level + 1);
     }
 }
 
@@ -74,7 +76,7 @@ bool Tree:: insert(int key)//вставка элемента
     tmp->_predoc = nullptr;
     while(tmp)
     {
-        if (tmp ->_data==key)
+        if (tmp ->_data == key)
         {
             return true;
         }
